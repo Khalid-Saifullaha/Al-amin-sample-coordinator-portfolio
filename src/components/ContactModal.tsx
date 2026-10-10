@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
-import { X, Phone, Mail, Building2, Send, CheckCircle2 } from 'lucide-react';
-import { COORDINATOR_DATA } from '../data/portfolioData';
+import React, { useState } from "react";
+import { X, Phone, Mail, Building2, Send, CheckCircle2 } from "lucide-react";
+import { COORDINATOR_DATA } from "../data/portfolioData";
 
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
+export const ContactModal: React.FC<ContactModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const [submitted, setSubmitted] = useState(false);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   if (!isOpen) return null;
 
@@ -25,13 +28,18 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
       <div className="fixed inset-0" onClick={onClose} aria-hidden="true" />
 
       <div className="relative w-full max-w-lg bg-stone-900 border border-stone-800 rounded-2xl shadow-2xl p-6 sm:p-8 z-10 text-stone-100">
-        
         {/* Header */}
         <div className="flex items-start justify-between border-b border-stone-800 pb-4 mb-5">
           <div>
-            <span className="text-xs font-mono text-amber-400 uppercase tracking-wider">Direct Liaison</span>
-            <h3 className="text-xl font-bold text-white font-display mt-0.5">Contact Md. Al Amin</h3>
-            <p className="text-xs text-stone-400 mt-1">Sample Coordinator · Synergies Sourcing Bangladesh</p>
+            <span className="text-xs font-mono text-amber-400 uppercase tracking-wider">
+              Direct Liaison
+            </span>
+            <h3 className="text-xl font-bold text-white font-display mt-0.5">
+              Contact Md. Al Amin
+            </h3>
+            <p className="text-xs text-stone-400 mt-1">
+              Sample Coordinator · Synergies Sourcing Bangladesh
+            </p>
           </div>
 
           <button
@@ -51,8 +59,12 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
           >
             <Phone className="w-4 h-4 text-amber-400 shrink-0" />
             <div className="truncate">
-              <span className="text-[10px] text-stone-500 block">Call Directly</span>
-              <span className="font-mono font-medium text-stone-200">{COORDINATOR_DATA.contact.phone}</span>
+              <span className="text-[10px] text-stone-500 block">
+                Call Directly
+              </span>
+              <span className="font-mono font-medium text-stone-200">
+                {COORDINATOR_DATA.contact.phone}
+              </span>
             </div>
           </a>
 
@@ -62,8 +74,12 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
           >
             <Mail className="w-4 h-4 text-amber-400 shrink-0" />
             <div className="truncate">
-              <span className="text-[10px] text-stone-500 block">Official Email</span>
-              <span className="font-mono font-medium text-stone-200 truncate block">al-amin@...</span>
+              <span className="text-[10px] text-stone-500 block">
+                Official Email
+              </span>
+              <span className="font-mono font-medium text-stone-200 truncate block">
+                al-amin@...
+              </span>
             </div>
           </a>
         </div>
@@ -88,7 +104,9 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div>
-              <label className="block text-stone-300 font-medium mb-1">Your Full Name *</label>
+              <label className="block text-stone-300 font-medium mb-1">
+                Your Full Name *
+              </label>
               <input
                 type="text"
                 required
@@ -100,7 +118,9 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
             </div>
 
             <div>
-              <label className="block text-stone-300 font-medium mb-1">Your Email *</label>
+              <label className="block text-stone-300 font-medium mb-1">
+                Your Email *
+              </label>
               <input
                 type="email"
                 required
@@ -112,7 +132,9 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
             </div>
 
             <div>
-              <label className="block text-stone-300 font-medium mb-1">Requirement / Inquiry Details *</label>
+              <label className="block text-stone-300 font-medium mb-1">
+                Requirement / Inquiry Details *
+              </label>
               <textarea
                 required
                 rows={3}
@@ -132,7 +154,6 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
             </button>
           </form>
         )}
-
       </div>
     </div>
   );

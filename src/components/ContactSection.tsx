@@ -10,6 +10,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { COORDINATOR_DATA } from "../data/portfolioData";
 
 interface ContactSectionProps {
@@ -51,7 +52,13 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-3xl mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-3xl mb-14"
+        >
           <div className="text-xs font-mono tracking-widest text-amber-400 uppercase mb-2">
             Direct Communication & Liaison
           </div>
@@ -63,12 +70,18 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
             reviews, buyer liaison support, or product development opportunities
             at Synergies Sourcing Bangladesh.
           </p>
-        </div>
+        </motion.div>
 
         {/* 2-Column Contact Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Left Column: Direct Official Contact Cards */}
-          <div className="lg:col-span-5 space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-5 space-y-4"
+          >
             {/* Phone Card */}
             <div className="bg-stone-900 border border-stone-800 rounded-2xl p-5 hover:border-amber-400/40 transition-colors">
               <div className="flex items-start justify-between">
@@ -190,10 +203,16 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Interactive Inquiry Form */}
-          <div className="lg:col-span-7 bg-stone-900 border border-stone-800 rounded-2xl p-6 sm:p-8">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-7 bg-stone-900 border border-stone-800 rounded-2xl p-6 sm:p-8"
+          >
             <h3 className="text-xl font-bold text-white font-display mb-1">
               Send a Direct Message
             </h3>
@@ -322,7 +341,7 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                 </button>
               </form>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

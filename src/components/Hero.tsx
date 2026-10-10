@@ -1,11 +1,102 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Phone, Mail, ArrowDown } from "lucide-react";
+import { motion } from "motion/react";
 import { COORDINATOR_DATA } from "../data/portfolioData";
 import heroImage from "../assets/hero-section-image.png";
 
 interface HeroProps {
-  onOpenContact: () => void;
+  onOpenContact?: () => void;
 }
+
+// Interactive Textile Weave / Thread Mesh Background
+const TextileThreadCanvas: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = (canvas.width = canvas.parentElement?.offsetWidth || 800);
+    let height = (canvas.height = canvas.parentElement?.offsetHeight || 600);
+
+    const handleResize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      width = canvas.width = canvas.parentElement.offsetWidth;
+      height = canvas.height = canvas.parentElement.offsetHeight;
+    };
+    window.addEventListener("resize", handleResize);
+
+    let mouseX = width * 0.7;
+    let mouseY = height * 0.5;
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+
+    let step = 0;
+    const linesCount = 14;
+
+    const render = () => {
+      step += 0.008;
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < linesCount; i++) {
+        ctx.beginPath();
+        const baseOpacity = 0.04 + (i / linesCount) * 0.12;
+        ctx.strokeStyle = `rgba(245, 158, 11, ${baseOpacity})`;
+        ctx.lineWidth = 1.2;
+
+        const points = 35;
+        for (let j = 0; j <= points; j++) {
+          const x = (width / points) * j;
+          const wave1 = Math.sin(step + j * 0.2 + i * 0.45) * 35;
+          const wave2 = Math.cos(step * 0.8 + (x / width) * 4) * 20;
+
+          const dx = mouseX - x;
+          const dy = mouseY - (height * 0.5 + wave1);
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const mouseInfluence = Math.max(0, 1 - dist / 220) * 25;
+
+          const y =
+            height * 0.48 +
+            wave1 +
+            wave2 +
+            (i - linesCount / 2) * 16 -
+            mouseInfluence;
+
+          if (j === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.stroke();
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none opacity-80"
+    />
+  );
+};
 
 // Hook for smooth numerical count-up animation
 function useCountUp(
@@ -22,7 +113,6 @@ function useCountUp(
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      // Smooth easeOutExpo formula
       const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
       const current = easeProgress * target;
 
@@ -42,7 +132,7 @@ function useCountUp(
   return count;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
+export const Hero: React.FC<HeroProps> = () => {
   // Animated statistics
   const yearsCount = useCountUp(4, 1800, 0);
   const stylesCount = useCountUp(350, 2200, 0);
@@ -51,6 +141,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
 
   return (
     <section className="relative bg-stone-950 text-stone-100 pt-12 pb-16 lg:pt-16 lg:pb-20 border-b border-stone-800 overflow-hidden">
+      {/* Interactive Textile Thread / Wave Canvas */}
+      <TextileThreadCanvas />
+
       {/* Subtle background weave glow */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-10 w-80 h-80 bg-stone-800/20 rounded-full blur-2xl pointer-events-none" />
@@ -59,7 +152,13 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
         {/* Split Screen 2-Column Hero */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Typographic Hierarchy */}
-          <div className="lg:col-span-7 flex flex-col justify-center space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-7 flex flex-col justify-center space-y-6"
+          >
             {/* Clean Unboxed Kicker */}
             <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-amber-400 uppercase">
               <span>Garments & Textile Industry</span>
@@ -126,7 +225,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
                   </span>
                   <a
                     href={`tel:${COORDINATOR_DATA.contact.phone}`}
-                    className="text-stone-100 hover:text-amber-400 font-mono font-medium"
+                    className="text-stone-100 hover:text-amber-400 font-mono font-medium "
                   >
                     {COORDINATOR_DATA.contact.phone}
                   </a>
@@ -159,20 +258,27 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
                 <ArrowDown className="w-4 h-4" />
               </a>
 
-              <button
-                onClick={onOpenContact}
-                className="px-5 py-3 rounded-lg bg-stone-800 hover:bg-stone-750 text-white font-medium text-sm border border-stone-700 transition-colors"
+              <a
+                href="#contact"
+                className="px-5 py-3 rounded-lg bg-stone-800 hover:bg-stone-750 text-white font-medium text-sm border border-stone-700 transition-colors inline-flex items-center justify-center"
               >
                 Contact Me
-              </button>
+              </a>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right Column: Hero Visual Container (Md. Al Amin Portrait) */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-md">
-              {/* Outer Frame */}
-              <div className="relative rounded-2xl overflow-hidden border border-stone-800 bg-stone-900 shadow-2xl aspect-[3/4] max-h-[520px]">
+          {/* Right Column: Hero Visual Container - Perfectly Aligned Without Cropping */}
+          <motion.div
+            initial={{ opacity: 0, y: 35 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 1.4, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-5 flex justify-center lg:justify-end"
+          >
+            {/* Preserves original size and sticks perfectly to the right */}
+            <div className="relative w-full max-w-[420px] lg:ml-auto">
+              {/* Outer Frame with original height and no cropping */}
+              <div className="relative rounded-2xl overflow-hidden border border-stone-800 bg-stone-900 shadow-2xl h-[480px] sm:h-[520px] lg:h-[540px] w-full">
                 <img
                   src={heroImage}
                   alt="Md. Al Amin - Sample Coordinator"
@@ -180,18 +286,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
                 />
 
                 {/* Scrim Overlay at bottom */}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-stone-950 via-stone-950/80 to-transparent p-5 pt-12 flex flex-col justify-end">
-                  <div className="flex items-center justify-between text-xs mb-1">
-                    {/* <span className="font-mono text-amber-400 font-medium">
-                      SYNERGIES SOURCING
-                    </span> */}
-                    {/* <span className="text-emerald-400 text-[11px] font-medium font-mono">
-                      Active Coordinator
-                    </span> */}
-                  </div>
-                  {/* <h3 className="text-lg font-bold text-white font-display">
-                    Md. Al Amin
-                  </h3> */}
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-stone-950 via-stone-950/80 to-transparent p-5 pt-14 flex flex-col justify-end">
                   <p className="text-xs text-stone-300">
                     Design & Product Development Dept
                   </p>
@@ -202,7 +297,17 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
               </div>
 
               {/* Floating tenure badge */}
-              <div className="absolute -bottom-4 -left-4 sm:-bottom-5 sm:-left-5 bg-stone-900 border border-stone-800 p-3.5 rounded-xl shadow-xl flex items-center gap-3 max-w-[260px]">
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 1.2,
+                  delay: 0.45,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="absolute -bottom-4 -left-4 sm:-bottom-5 sm:-left-5 bg-stone-900 border border-stone-800 p-3.5 rounded-xl shadow-xl flex items-center gap-3 max-w-[260px] z-20"
+              >
                 <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 font-bold font-mono text-sm">
                   {yearsCount}+
                 </div>
@@ -214,13 +319,19 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
                     Sample Development & Buyer Follow-up
                   </p>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Animated Numerical Metric Strip */}
-        <div className="mt-16 pt-8 border-t border-stone-800 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 1.2, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-16 pt-8 border-t border-stone-800 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+        >
           {/* Stat 1: 4+ Years */}
           <div className="space-y-1">
             <div className="text-3xl sm:text-4xl font-extrabold text-white font-mono tracking-tight tabular-nums">
@@ -271,7 +382,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
             </div>
             <div className="text-xs text-stone-400">Sample First-Fit Pass</div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Award,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { CLIENT_DATA } from "../data/portfolioData";
 
 export const CareerHighlights: React.FC = () => {
@@ -63,7 +64,13 @@ export const CareerHighlights: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-3xl mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1.0] }}
+          className="max-w-3xl mb-14"
+        >
           <div className="text-xs font-mono font-semibold text-amber-400 uppercase tracking-widest mb-2">
             Professional Competencies
           </div>
@@ -75,7 +82,7 @@ export const CareerHighlights: React.FC = () => {
             coordination, and on-time execution at Synergies Sourcing
             Bangladesh.
           </p>
-        </div>
+        </motion.div>
 
         {/* 3 Modern Dark Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
@@ -83,12 +90,20 @@ export const CareerHighlights: React.FC = () => {
             const Icon = item.icon;
 
             return (
-              <div
+              <motion.div
                 key={idx}
-                className="group relative rounded-2xl bg-gradient-to-b from-stone-900 via-stone-900 to-stone-925 border border-stone-800/90 hover:border-amber-400/40 p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-2xl h-full"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  duration: 0.8,
+                  delay: idx * 0.12,
+                  ease: [0.25, 0.1, 0.25, 1.0],
+                }}
+                className="group relative rounded-2xl bg-gradient-to-b from-stone-900 via-stone-900 to-stone-925 border border-stone-800/90 hover:border-amber-400/40 p-7 flex flex-col justify-between shadow-lg hover:shadow-2xl h-full transition-colors duration-300"
               >
                 {/* Top Ambient Glow on Hover */}
-                <div className="absolute top-0 inset-x-8 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute top-0 inset-x-8 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 <div className="space-y-5">
                   {/* Card Header: Icon & Editorial Index */}
@@ -141,7 +156,7 @@ export const CareerHighlights: React.FC = () => {
                   <span>Synergies Bangladesh</span>
                   <span className="text-amber-400/80">Active Focus</span>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
