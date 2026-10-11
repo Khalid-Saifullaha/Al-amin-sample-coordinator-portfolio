@@ -82,7 +82,7 @@ export const COORDINATOR_DATA = {
   contact: {
     phone: "01902123875",
     phoneInternational: "+880 1902 123875",
-    email: "al-amin@synergiesbangladesh.com",
+    email: "alaminkhan3134@gmail.com",
     location: "Dhaka, Bangladesh",
     availability: "Full-Time · Mon - Sat (09:00 - 18:00 BST)",
   },
