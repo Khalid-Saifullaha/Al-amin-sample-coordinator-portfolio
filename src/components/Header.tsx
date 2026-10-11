@@ -6,6 +6,7 @@ export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
+    { label: "Home", href: "/" },
     { label: "Highlights", href: "#highlights" },
     { label: "Sample Works", href: "#gallery" },
     { label: "Education", href: "#education" },
@@ -29,7 +30,7 @@ export const Header: React.FC = () => {
           <span>MD. AL AMIN</span>
         </a>
 
-        {/* Zone 2: 4 clean single-line nav links */}
+        {/* Zone 2: Clean single-line nav links */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-stone-300">
           {navLinks.map((link) => (
             <a
