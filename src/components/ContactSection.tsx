@@ -40,6 +40,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     setIsSubmitting(true);
     setErrorMessage(null);
 
+    const accessKey =
+      import.meta.env.VITE_WEB3FORMS_ACCESS_KEY ||
+      "44cce38a-5648-4656-9471-b2a57b23476a";
+
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
@@ -48,7 +52,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: "796130",
+          access_key: accessKey,
           subject: `New Portfolio Inquiry from ${formData.name}`,
           from_name: formData.name,
           name: formData.name,
