@@ -9,6 +9,7 @@ import {
   MessageSquare,
   Copy,
   Check,
+  Loader2,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { COORDINATOR_DATA } from "../data/portfolioData";
@@ -17,8 +18,13 @@ interface ContactSectionProps {
   onSuccess?: () => void;
 }
 
-export const ContactSection: React.FC<ContactSectionProps> = () => {
+export const ContactSection: React.FC<ContactSectionProps> = ({
+  onSuccess,
+}) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [formData, setFormData] = useState({
@@ -29,22 +35,55 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage(null);
 
-    const subject = encodeURIComponent(
-      `Portfolio Inquiry from ${formData.name}`,
-    );
-    const body = encodeURIComponent(
-      `Name: ${formData.name}\n` +
-        `Company: ${formData.organization}\n` +
-        `Phone: ${formData.phone}\n` +
-        `Email: ${formData.email}\n\n` +
-        `Message:\n${formData.message}`,
-    );
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "796130",
+          subject: `New Portfolio Inquiry from ${formData.name}`,
+          from_name: formData.name,
+          name: formData.name,
+          company: formData.organization || "N/A",
+          email: formData.email,
+          phone: formData.phone || "N/A",
+          message: formData.message,
+        }),
+      });
 
-    window.location.href = `mailto:${COORDINATOR_DATA.contact.email}?subject=${subject}&body=${body}`;
-    setFormSubmitted(true);
+      const result = await response.json();
+
+      if (result.success) {
+        setFormSubmitted(true);
+        setFormData({
+          name: "",
+          organization: "",
+          email: "",
+          phone: "",
+          message: "",
+        });
+        if (onSuccess) onSuccess();
+      } else {
+        setErrorMessage(
+          result.message ||
+            "Failed to send message. Please try WhatsApp directly.",
+        );
+      }
+    } catch {
+      setErrorMessage(
+        "Network error. Please try again or reach out directly via WhatsApp.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const copyToClipboard = (text: string, type: "phone" | "email") => {
@@ -211,7 +250,7 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 text-stone-300 pt-2 border-t border-stone-850">
+              <div className="flex items-start gap-3 text-stone-300 pt-2 border-t border-stone-800">
                 <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="text-stone-500 block text-[12px]">
@@ -230,7 +269,11 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              duration: 0.9,
+              delay: 0.15,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             className="lg:col-span-7 bg-stone-900 border border-stone-800 rounded-2xl p-6 sm:p-8"
           >
             <h3 className="text-xl font-bold text-white font-display mb-1">
@@ -250,9 +293,9 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                   Inquiry Received
                 </h4>
                 <p className="text-xs text-stone-300 max-w-md mx-auto">
-                  Thank you! Your message has been sent to Md. Al-Amin (
-                  {COORDINATOR_DATA.contact.email}). You can also connect
-                  directly via WhatsApp at{" "}
+                  Thank you! Your message has been routed directly to Md.
+                  Al-Amin ({COORDINATOR_DATA.contact.email}). You can also
+                  connect instantly via WhatsApp at{" "}
                   <a
                     href={whatsappUrl}
                     target="_blank"
@@ -264,14 +307,21 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                   .
                 </p>
                 <button
+                  type="button"
                   onClick={() => setFormSubmitted(false)}
-                  className="mt-3 px-4 py-2 text-xs font-medium text-stone-300 hover:text-white bg-stone-900 border border-stone-800 rounded-lg"
+                  className="mt-3 px-4 py-2 text-xs font-medium text-stone-300 hover:text-white bg-stone-900 border border-stone-800 rounded-lg hover:border-amber-400/40 transition-colors"
                 >
                   Send Another Inquiry
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+                {errorMessage && (
+                  <div className="p-3 bg-red-950/60 border border-red-500/50 rounded-xl text-red-200 text-xs">
+                    {errorMessage}
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-stone-300 font-medium mb-1.5">
@@ -340,7 +390,7 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
 
                 <div>
                   <label className="block text-stone-300 font-medium mb-1.5">
-                    Message
+                    Message *
                   </label>
                   <textarea
                     required
@@ -356,10 +406,20 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
 
                 <button
                   type="submit"
-                  className="w-full py-3 px-5 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs uppercase tracking-wider transition-colors shadow-md flex items-center justify-center gap-2 mt-2"
+                  disabled={isSubmitting}
+                  className="w-full py-3 px-5 rounded-xl bg-amber-400 hover:bg-amber-300 disabled:bg-amber-400/50 text-stone-950 font-bold text-xs uppercase tracking-wider transition-colors shadow-md flex items-center justify-center gap-2 mt-2"
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Transmit Inquiry to Md. Al-Amin</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Transmitting Inquiry...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Transmit Inquiry to Md. Al-Amin</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}
