@@ -71,7 +71,7 @@ export interface WorkflowStage {
 }
 
 export const COORDINATOR_DATA = {
-  name: "MD. AL AMIN",
+  name: "MD. AL-AMIN",
   bengaliName: "মো. আল আমিন",
   designation: "SAMPLE COORDINATOR",
   subTitle: "Garments & Textile Product Development Specialist",

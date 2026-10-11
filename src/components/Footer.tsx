@@ -3,7 +3,7 @@ import { ArrowUp, Phone, Github, ExternalLink } from "lucide-react";
 import { motion } from "motion/react";
 
 export const personalInfo = {
-  name: "MD. AL AMIN",
+  name: "MD. AL-AMIN",
   role: "SAMPLE COORDINATOR",
   industry: "Garments & Textile Industry",
   company: "Synergies Sourcing Bangladesh",

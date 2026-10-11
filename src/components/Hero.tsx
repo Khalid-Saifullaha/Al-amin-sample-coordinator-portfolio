@@ -169,7 +169,7 @@ export const Hero: React.FC<HeroProps> = () => {
             {/* Headline */}
             <div className="space-y-2">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-display leading-[1.08] text-balance">
-                MD. AL AMIN
+                MD. AL-AMIN
               </h1>
               <p className="text-xl sm:text-2xl font-semibold text-amber-400 font-display tracking-wide">
                 SAMPLE COORDINATOR
@@ -281,7 +281,7 @@ export const Hero: React.FC<HeroProps> = () => {
               <div className="relative rounded-2xl overflow-hidden border border-stone-800 bg-stone-900 shadow-2xl h-[480px] sm:h-[520px] lg:h-[540px] w-full">
                 <img
                   src={heroImage}
-                  alt="Md. Al Amin - Sample Coordinator"
+                  alt="Md. Al-Amin - Sample Coordinator"
                   className="w-full h-full object-cover object-top"
                 />
 

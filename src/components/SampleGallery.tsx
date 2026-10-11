@@ -98,7 +98,7 @@ export const SampleGallery: React.FC = () => {
             SAMPLE WORKS
           </h2>
           <p className="text-stone-400 text-xs sm:text-sm mt-2">
-            Garments and textile development samples coordinated by Md. Al Amin.
+            Garments and textile development samples coordinated by Md. Al-Amin.
           </p>
         </motion.div>
 

@@ -31,6 +31,19 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const subject = encodeURIComponent(
+      `Portfolio Inquiry from ${formData.name}`,
+    );
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\n` +
+        `Company: ${formData.organization}\n` +
+        `Phone: ${formData.phone}\n` +
+        `Email: ${formData.email}\n\n` +
+        `Message:\n${formData.message}`,
+    );
+
+    window.location.href = `mailto:${COORDINATOR_DATA.contact.email}?subject=${subject}&body=${body}`;
     setFormSubmitted(true);
   };
 
@@ -44,6 +57,13 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
       setTimeout(() => setCopiedEmail(false), 2000);
     }
   };
+
+  // WhatsApp Pre-filled message and link generator
+  const cleanPhone = COORDINATOR_DATA.contact.phone.replace(/^0/, "");
+  const defaultWhatsAppMsg = encodeURIComponent(
+    "Hello Md. Al-Amin, I am reaching out regarding garments sample coordination and product development at Synergies Sourcing Bangladesh.",
+  );
+  const whatsappUrl = `https://wa.me/880${cleanPhone}?text=${defaultWhatsAppMsg}`;
 
   return (
     <section
@@ -63,7 +83,7 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
             Direct Communication & Liaison
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold font-display text-white tracking-tight">
-            Get in Touch with Md. Al Amin
+            Get in Touch with Md. Al-Amin
           </h2>
           <p className="mt-3 text-stone-400 text-sm sm:text-base leading-relaxed">
             Reach out directly for sample coordination inquiries, tech pack
@@ -82,7 +102,7 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-5 space-y-4"
           >
-            {/* Phone Card */}
+            {/* Phone & WhatsApp Card */}
             <div className="bg-stone-900 border border-stone-800 rounded-2xl p-5 hover:border-amber-400/40 transition-colors">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3.5">
@@ -94,7 +114,10 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                       Mobile & WhatsApp
                     </span>
                     <a
-                      href={`tel:${COORDINATOR_DATA.contact.phone}`}
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Chat on WhatsApp"
                       className="text-lg font-bold font-mono text-white hover:text-amber-400 transition-colors block"
                     >
                       {COORDINATOR_DATA.contact.phone}
@@ -119,9 +142,9 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
 
               <div className="mt-4 pt-3 border-t border-stone-800 flex items-center justify-between text-xs">
                 <a
-                  href={`https://wa.me/880${COORDINATOR_DATA.contact.phone.replace(/^0/, "")}`}
+                  href={whatsappUrl}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1.5"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
@@ -185,9 +208,6 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                   <span className="text-stone-100 font-medium">
                     Synergies Sourcing Bangladesh
                   </span>
-                  {/* <span className="text-stone-400 block mt-0.5">
-                    Dhaka, Bangladesh · Garments Export Hub
-                  </span> */}
                 </div>
               </div>
 
@@ -230,12 +250,17 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                   Inquiry Received
                 </h4>
                 <p className="text-xs text-stone-300 max-w-md mx-auto">
-                  Thank you! Your message has been sent to Md. Al Amin (
-                  {COORDINATOR_DATA.contact.email}). You can also call directly
-                  at{" "}
-                  <strong className="text-white font-mono">
+                  Thank you! Your message has been sent to Md. Al-Amin (
+                  {COORDINATOR_DATA.contact.email}). You can also connect
+                  directly via WhatsApp at{" "}
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-400 hover:underline font-mono font-bold"
+                  >
                     {COORDINATOR_DATA.contact.phone}
-                  </strong>
+                  </a>
                   .
                 </p>
                 <button
@@ -255,7 +280,6 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                     <input
                       type="text"
                       required
-                      // placeholder="e.g. John Doe / Sourcing Manager"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
@@ -291,7 +315,6 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                     <input
                       type="email"
                       required
-                      // placeholder="Enter your email"
                       value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
@@ -306,7 +329,6 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                     </label>
                     <input
                       type="tel"
-                      // placeholder="+880 1XXX-XXXXXX"
                       value={formData.phone}
                       onChange={(e) =>
                         setFormData({ ...formData, phone: e.target.value })
@@ -337,7 +359,7 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                   className="w-full py-3 px-5 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs uppercase tracking-wider transition-colors shadow-md flex items-center justify-center gap-2 mt-2"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Transmit Inquiry to Md. Al Amin</span>
+                  <span>Transmit Inquiry to Md. Al-Amin</span>
                 </button>
               </form>
             )}

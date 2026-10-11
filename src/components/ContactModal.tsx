@@ -35,7 +35,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
               Direct Liaison
             </span>
             <h3 className="text-xl font-bold text-white font-display mt-0.5">
-              Contact Md. Al Amin
+              Contact Md. Al-Amin
             </h3>
             <p className="text-xs text-stone-400 mt-1">
               Sample Coordinator · Synergies Sourcing Bangladesh
@@ -89,7 +89,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
             <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
             <h4 className="text-sm font-bold text-white">Inquiry Forwarded</h4>
             <p className="text-xs text-stone-400">
-              Md. Al Amin has received your message and will reply promptly.
+              Md. Al-Amin has received your message and will reply promptly.
             </p>
             <button
               onClick={() => {

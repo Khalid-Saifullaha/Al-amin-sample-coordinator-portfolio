@@ -88,7 +88,7 @@ export const SmartImage: React.FC<SmartImageProps> = ({
 
           <div className="relative z-10">
             <h4 className="text-xl font-bold font-display text-stone-100 tracking-tight">
-              MD. AL AMIN
+              MD. AL-AMIN
             </h4>
             <p className="text-xs text-amber-400 font-medium tracking-wide uppercase mt-0.5">
               Sample Coordinator

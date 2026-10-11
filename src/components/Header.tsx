@@ -27,7 +27,7 @@ export const Header: React.FC = () => {
           className="text-lg sm:text-xl font-bold tracking-tight text-stone-100 hover:text-amber-400 transition-colors whitespace-nowrap shrink-0 flex items-center gap-2"
         >
           <span className="w-2.5 h-2.5 bg-amber-500 rounded-sm"></span>
-          <span>MD. AL AMIN</span>
+          <span>MD. AL-AMIN</span>
         </a>
 
         {/* Zone 2: Clean single-line nav links */}
