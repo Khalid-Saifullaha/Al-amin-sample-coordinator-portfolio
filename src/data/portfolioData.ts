@@ -1,6 +1,6 @@
-import image1 from "../assets/1.jpeg";
-import image2 from "../assets/2.jpeg";
-import image3 from "../assets/3.jpeg";
+import image1 from "../assets/WhatsApp Image 2026-10-11 at 5.07.51 PM.jpeg";
+import image2 from "../assets/Garment Design Development Studio (1).png";
+import image3 from "../assets/Modern Fashion Design Studio Showcase.png";
 import image4 from "../assets/4.jpeg";
 import image5 from "../assets/5.jpeg";
 import image6 from "../assets/6.jpeg";

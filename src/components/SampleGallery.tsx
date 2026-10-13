@@ -5,6 +5,9 @@ import { X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import { motion } from "motion/react";
 
 export const SampleGallery: React.FC = () => {
+  // শুধুমাত্র ৩টি ইমেজ ফিল্টার করে নেওয়া হলো
+  const displaySamples = CLIENT_DATA.samples.slice(0, 3);
+
   const [selectedSample, setSelectedSample] = useState<SampleItem | null>(null);
   const [activeMobileIndex, setActiveMobileIndex] = useState(0);
   const [isInteracting, setIsInteracting] = useState(false);
@@ -22,13 +25,13 @@ export const SampleGallery: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedSample]);
 
-  // Mobile Auto-slide behavior (pauses on user touch)
+  // Mobile Auto-slide behavior
   useEffect(() => {
     if (isInteracting) return;
 
     const interval = setInterval(() => {
       if (!mobileSliderRef.current) return;
-      const nextIndex = (activeMobileIndex + 1) % CLIENT_DATA.samples.length;
+      const nextIndex = (activeMobileIndex + 1) % displaySamples.length;
       scrollToMobileIndex(nextIndex);
     }, 3500);
 
@@ -38,8 +41,8 @@ export const SampleGallery: React.FC = () => {
   const scrollToMobileIndex = (index: number) => {
     if (!mobileSliderRef.current) return;
     const container = mobileSliderRef.current;
-    const cardWidth = container.offsetWidth * 0.85; // matches 85% width card
-    const targetScroll = index * (cardWidth + 16); // 16px gap
+    const cardWidth = container.offsetWidth * 0.85;
+    const targetScroll = index * (cardWidth + 16);
     container.scrollTo({
       left: targetScroll,
       behavior: "smooth",
@@ -52,29 +55,28 @@ export const SampleGallery: React.FC = () => {
     const container = mobileSliderRef.current;
     const cardWidth = container.offsetWidth * 0.85;
     const index = Math.round(container.scrollLeft / (cardWidth + 16));
-    if (index >= 0 && index < CLIENT_DATA.samples.length) {
+    if (index >= 0 && index < displaySamples.length) {
       setActiveMobileIndex(index);
     }
   };
 
   const handlePrev = () => {
     if (!selectedSample) return;
-    const currentIndex = CLIENT_DATA.samples.findIndex(
+    const currentIndex = displaySamples.findIndex(
       (s) => s.id === selectedSample.id,
     );
     const prevIndex =
-      (currentIndex - 1 + CLIENT_DATA.samples.length) %
-      CLIENT_DATA.samples.length;
-    setSelectedSample(CLIENT_DATA.samples[prevIndex]);
+      (currentIndex - 1 + displaySamples.length) % displaySamples.length;
+    setSelectedSample(displaySamples[prevIndex]);
   };
 
   const handleNext = () => {
     if (!selectedSample) return;
-    const currentIndex = CLIENT_DATA.samples.findIndex(
+    const currentIndex = displaySamples.findIndex(
       (s) => s.id === selectedSample.id,
     );
-    const nextIndex = (currentIndex + 1) % CLIENT_DATA.samples.length;
-    setSelectedSample(CLIENT_DATA.samples[nextIndex]);
+    const nextIndex = (currentIndex + 1) % displaySamples.length;
+    setSelectedSample(displaySamples[nextIndex]);
   };
 
   return (
@@ -103,7 +105,7 @@ export const SampleGallery: React.FC = () => {
         </motion.div>
 
         {/* ============================================================== */}
-        {/* 1. MOBILE VIEW ONLY: Touch-Friendly Auto Slider (Hidden on Desktop) */}
+        {/* 1. MOBILE VIEW ONLY: Touch-Friendly Auto Slider */}
         {/* ============================================================== */}
         <div className="block md:hidden">
           <div
@@ -114,7 +116,7 @@ export const SampleGallery: React.FC = () => {
             className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4 px-1"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {CLIENT_DATA.samples.map((sample) => (
+            {displaySamples.map((sample) => (
               <div
                 key={sample.id}
                 onClick={() => setSelectedSample(sample)}
@@ -145,9 +147,8 @@ export const SampleGallery: React.FC = () => {
 
           {/* Slider Pagination Dots & Counter */}
           <div className="flex items-center justify-between pt-3 px-1 text-xs">
-            {/* Clear, High-Contrast Dots */}
             <div className="flex items-center gap-2">
-              {CLIENT_DATA.samples.map((_, idx) => (
+              {displaySamples.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => scrollToMobileIndex(idx)}
@@ -160,114 +161,138 @@ export const SampleGallery: React.FC = () => {
                 />
               ))}
             </div>
-
-            {/* Counter */}
             <div className="text-[11px] font-mono text-stone-400">
               <span className="text-amber-400 font-bold">
                 {activeMobileIndex + 1}
               </span>
               {" / "}
-              <span>{CLIENT_DATA.samples.length}</span>
+              <span>{displaySamples.length}</span>
             </div>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* 2. DESKTOP VIEW ONLY: 3-Column Grid (Hidden on Mobile)         */}
+        {/* 2. DESKTOP VIEW ONLY: Unique Bento Box Layout (1 Large, 2 Small) */}
         {/* ============================================================== */}
-        <div className="hidden md:grid md:grid-cols-3 gap-6">
-          {CLIENT_DATA.samples.map((sample, idx) => (
-            <motion.div
-              key={sample.id}
-              initial={{ opacity: 0, y: 25 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{
-                duration: 1.0,
-                delay: (idx % 3) * 0.12,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              onClick={() => setSelectedSample(sample)}
-              className="group cursor-pointer rounded-xl overflow-hidden bg-stone-900 border border-stone-800 hover:border-amber-400 shadow-md hover:shadow-xl flex flex-col transition-colors duration-300"
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-950">
-                <SmartImage
-                  src={sample.image}
-                  alt={sample.title}
-                  className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                  imageKey={`sample_${sample.id}`}
-                  label={sample.fileName}
-                />
+        <div className="hidden md:grid md:grid-cols-12 md:grid-rows-2 gap-4 lg:gap-6 md:h-[500px] lg:h-[600px]">
+          {displaySamples.map((sample, idx) => {
+            // প্রথম ইমেজটি গ্রিডে বড় জায়গা নিবে
+            const isFeatured = idx === 0;
 
-                {/* Hover overlay with zoom icon */}
-                <div className="absolute inset-0 bg-stone-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <div className="p-2.5 rounded-full bg-stone-900/90 text-amber-400 shadow-lg">
-                    <Maximize2 className="w-5 h-5" />
+            return (
+              <motion.div
+                key={sample.id}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{
+                  duration: 1.0,
+                  delay: idx * 0.15,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                onClick={() => setSelectedSample(sample)}
+                className={`group cursor-pointer rounded-2xl lg:rounded-3xl overflow-hidden bg-stone-900 border border-stone-800 hover:border-amber-500/50 shadow-md hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500 relative
+                  ${isFeatured ? "md:col-span-8 md:row-span-2" : "md:col-span-4 md:row-span-1"}
+                `}
+              >
+                <div className="absolute inset-0 w-full h-full bg-stone-950">
+                  <SmartImage
+                    src={sample.image}
+                    alt={sample.title}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    imageKey={`sample_${sample.id}`}
+                    label={sample.fileName}
+                  />
+
+                  {/* Gradient Overlay for better text visibility */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-stone-950/20 opacity-60 group-hover:opacity-40 transition-opacity duration-500`}
+                  />
+
+                  {/* Hover icon */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                    <div className="p-3 rounded-full bg-stone-950/80 backdrop-blur-sm text-amber-400 shadow-xl border border-stone-700/50 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                      <Maximize2 className="w-6 h-6" />
+                    </div>
                   </div>
-                </div>
 
-                <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-stone-950/80 text-[10px] font-mono text-amber-400 border border-stone-800">
-                  {sample.fileName}
+                  {/* Badge & Title */}
+                  <div className="absolute top-4 left-4 flex gap-2">
+                    <div className="px-2.5 py-1 rounded-md bg-stone-950/80 backdrop-blur-md text-xs font-mono text-amber-400 border border-stone-700/50">
+                      {sample.fileName}
+                    </div>
+                  </div>
+
+                  {isFeatured && (
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <h3 className="text-xl lg:text-2xl font-bold text-white mb-2 drop-shadow-md">
+                        {sample.title}
+                      </h3>
+                      <div className="h-1 w-12 bg-amber-400 rounded-full"></div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Lightbox Modal */}
+      {/* Lightbox Modal (আগের মতোই রাখা হয়েছে) */}
       {selectedSample && (
-        <div className="fixed inset-0 z-50 bg-stone-950/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-[100] bg-stone-950/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
           <div
             className="fixed inset-0"
             onClick={() => setSelectedSample(null)}
           />
 
-          <div className="relative max-w-4xl w-full bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden shadow-2xl z-10 flex flex-col max-h-[90vh]">
-            {/* Lightbox Header */}
+          <div className="relative max-w-5xl w-full bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden shadow-2xl z-10 flex flex-col max-h-[90vh]">
             <div className="flex items-center justify-between px-5 py-3.5 border-b border-stone-800 bg-stone-950 text-stone-200">
-              <span className="text-xs font-mono text-amber-400">
+              <span className="text-sm font-mono text-amber-400">
                 {selectedSample.fileName}
               </span>
               <button
                 onClick={() => setSelectedSample(null)}
-                className="p-1.5 text-stone-400 hover:text-white rounded-lg transition-colors"
+                className="p-1.5 text-stone-400 hover:text-white hover:bg-stone-800 rounded-lg transition-colors"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Lightbox Image Area */}
-            <div className="relative flex-1 bg-stone-950 flex items-center justify-center p-2 min-h-[300px] overflow-hidden">
+            <div className="relative flex-1 bg-stone-950 flex items-center justify-center p-4 min-h-[400px] overflow-hidden">
               <SmartImage
                 src={selectedSample.image}
                 alt={selectedSample.title}
-                className="max-h-[70vh] w-auto max-w-full object-contain"
-                imageKey={`sample_${selectedSample.id}`}
+                className="max-h-[75vh] w-auto max-w-full object-contain rounded-md"
+                imageKey={`sample_lb_${selectedSample.id}`}
                 label={selectedSample.fileName}
               />
             </div>
 
-            {/* Lightbox Footer Controls */}
-            <div className="flex items-center justify-between px-5 py-3 border-t border-stone-800 bg-stone-950 text-xs">
+            <div className="flex items-center justify-between px-5 py-4 border-t border-stone-800 bg-stone-950 text-sm">
               <button
                 onClick={handlePrev}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-stone-900 hover:bg-stone-800 border border-stone-800 hover:border-stone-700 text-stone-300 hover:text-white transition-all"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>Previous</span>
+                <span className="hidden sm:inline">Previous</span>
               </button>
 
-              <span className="font-mono text-stone-500">
-                {selectedSample.id} of {CLIENT_DATA.samples.length}
-              </span>
+              <div className="font-mono text-stone-400 flex items-center gap-2">
+                <span className="text-amber-400">
+                  {displaySamples.findIndex((s) => s.id === selectedSample.id) +
+                    1}
+                </span>
+                <span>/</span>
+                <span>{displaySamples.length}</span>
+              </div>
 
               <button
                 onClick={handleNext}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-stone-900 hover:bg-stone-800 border border-stone-800 hover:border-stone-700 text-stone-300 hover:text-white transition-all"
               >
-                <span>Next</span>
+                <span className="hidden sm:inline">Next</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
